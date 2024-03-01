@@ -1,6 +1,6 @@
 import winston, { format } from "winston";
-import dotenvFlow from "dotenv-flow";
-dotenvFlow.config();
+// import dotenvFlow from "dotenv-flow";
+// dotenvFlow.config();
 export const logger = winston.createLogger({
   level: "debug",
   format: format.combine(
@@ -12,4 +12,5 @@ export const logger = winston.createLogger({
   transports: [new winston.transports.Console()],
 });
 
+logger.info("an info log");
 export default logger;
