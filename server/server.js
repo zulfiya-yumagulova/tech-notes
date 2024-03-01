@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 import logger from "./libraries/logger-lib/logger.js";
 import { app } from "./app.js";
 import { ERROR_LEVEL } from "./libraries/logger-lib/errorLevels.js";
-// app.use(logger);
 
 const PORT = process.env.PORT || 3000;
 
