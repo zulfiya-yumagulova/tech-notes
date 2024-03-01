@@ -1,7 +1,28 @@
 import express from "express";
-import { createUser } from "../controllers/userController.js";
+import {
+  getAllUsers,
+  getUser,
+  createNewUser,
+  updateUser,
+  deleteUser,
+} from "../controllers/userController.js";
 
+// Create Users Router
 export const userRouter = express.Router();
+const app = express();
+app.use("/users", userRouter);
+
+// GET
+userRouter.get("/", getAllUsers);
+
+// GET by id
+userRouter.get("/", getUser);
 
 // POST
-userRouter.post("/", createUser);
+userRouter.post("/", createNewUser);
+
+// PATCH
+userRouter.patch("/:id", updateUser);
+
+// Delete
+userRouter.delete("/:id", deleteUser);
