@@ -12,5 +12,4 @@ export const logger = winston.createLogger({
   transports: [new winston.transports.Console()],
 });
 
-logger.info("an info log");
 export default logger;
