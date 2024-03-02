@@ -43,7 +43,7 @@ export const createNewUser = asyncHandler(async (req, res) => {
   const { username, password, roles } = req.body;
 
   // Confirm data
-  if (!username || !password || !roles || !roles.length) {
+  if (!username || !password || !Array.isArray(roles) || !roles.length) {
     return res.status(400).json({
       message: `All fields are required username, password, roles `,
     });
@@ -95,7 +95,8 @@ export const updateUser = asyncHandler(async (req, res) => {
     });
   }
 
-  const user = awaitUser.findById(id).exec();
+  // Check if user exists
+  const user = await User.findById(id).exec();
   if (!user) {
     return res.status(400).json({
       message: "No user found",
@@ -132,21 +133,24 @@ export const updateUser = asyncHandler(async (req, res) => {
 // Delete a user
 // DELETE
 export const deleteUser = asyncHandler(async (req, res) => {
-  const { id } = req.body;
+  const { id } = req.params;
   if (!id) {
     return res.status(400).json({
       message: "User ID Required",
     });
   }
 
-  const notes = awaitNote.findOne({ user: id }).lean().exec();
+  // Does the user still have assigned notes?
+  const note = await Note.findOne({ user: id }).lean().exec();
+
   // Avoid deleting user if notes were assigned
-  if (notes?.length) {
+  if (note) {
     return res.status(400).json({
       message: "User has assigned notes",
     });
   }
 
+  // Does the user exist to delete?
   const user = await User.findById(id).exec();
   if (!user) {
     return res.status(400).json({
