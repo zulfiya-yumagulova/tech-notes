@@ -16,7 +16,7 @@ app.use("/users", userRouter);
 userRouter.get("/", getAllUsers);
 
 // GET by id
-userRouter.get("/", getUser);
+userRouter.get("/:id", getUser);
 
 // POST
 userRouter.post("/", createNewUser);

@@ -20,7 +20,22 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
 // Get a single user
 // GET
-export const getUser = asyncHandler(async (req, res) => {});
+export const getUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findById(id);
+    res.status(200).json({
+      data: {
+        user,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "fail",
+      message: error,
+    });
+  }
+});
 
 // Create new  user
 // POST
