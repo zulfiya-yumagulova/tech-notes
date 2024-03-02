@@ -23,7 +23,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 export const getUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(id).select("-password").lean();
     res.status(200).json({
       data: {
         user,
