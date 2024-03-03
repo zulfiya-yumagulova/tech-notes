@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { userRouter } from "./routes/userRouter.js";
+import { noteRouter } from "./routes/noteRouter.js";
 
 export const app = express();
 
@@ -18,3 +19,4 @@ app.use((req, res, next) => {
 });
 
 app.use("/users", userRouter);
+app.use("/notes", noteRouter);
