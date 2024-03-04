@@ -82,7 +82,7 @@ export const createNote = asyncHandler(async (req, res) => {
 // Udate note
 // PATCH
 export const updateNote = asyncHandler(async (req, res) => {
-  const { id, user, title, text, completed } = req.paras;
+  const { id, user, title, text, completed } = req.params;
 
   // Confirm data
   if (!id || !user || !title || !text || typeof completed !== "boolean") {
