@@ -1,7 +1,7 @@
-import { confugureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "./api/apiSlice.js";
+import { configureStore } from "@reduxjs/toolkit";
+import { apiSlice } from "./api/apiSlice";
 
-export const store = confugureStore({
+export const store = configureStore({
   reducer: {
     [apiSlice.reducerPath]: apiSlice.reducer,
   },

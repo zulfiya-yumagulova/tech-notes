@@ -1,7 +1,7 @@
 import { useGetUsersQuery } from "./usersApiSlice";
 import User from "./User";
 
-function UsersList() {
+const UsersList = () => {
   const {
     data: users,
     isLoading,
@@ -20,12 +20,12 @@ function UsersList() {
 
   if (isSuccess) {
     const { ids } = users;
-
+    console.log(users, "users");
     const tableContent = ids?.length
       ? ids.map((userId) => <User key={userId} userId={userId} />)
       : null;
 
-    return (
+    content = (
       <table className="table table--users">
         <thead className="table__thead">
           <tr>
@@ -44,6 +44,7 @@ function UsersList() {
       </table>
     );
   }
-}
 
+  return content;
+};
 export default UsersList;
