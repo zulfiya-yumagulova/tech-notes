@@ -17,6 +17,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
       },
       transformResponse: (responseData) => {
         const loadedNotes = responseData.map((note) => {
+          console.log(responseData, "notes");
           note.id = note._id;
           return note;
         });
@@ -31,6 +32,7 @@ export const notesApiSlice = apiSlice.injectEndpoints({
         } else return [{ type: "Note", id: "LIST" }];
       },
     }),
+    // Add note
     addNewNote: builder.mutation({
       query: (initialNote) => ({
         url: "/notes",
@@ -41,6 +43,8 @@ export const notesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: [{ type: "Note", id: "LIST" }],
     }),
+
+    // Update note
     updateNote: builder.mutation({
       query: (initialNote) => ({
         url: "/notes",
@@ -51,6 +55,8 @@ export const notesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: (result, error, arg) => [{ type: "Note", id: arg.id }],
     }),
+
+    // Delete note
     deleteNote: builder.mutation({
       query: ({ id }) => ({
         url: `/notes`,
