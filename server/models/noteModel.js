@@ -8,7 +8,7 @@ export const noteSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      index: true,
+      ref: "User",
     },
     title: {
       type: String,
