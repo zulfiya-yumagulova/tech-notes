@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Layout from "./Components/Layout.jsx";
 import Public from "./Components/Public.jsx";
 import Login from "./features/auth/Login.jsx";
@@ -6,6 +6,10 @@ import DashLayout from "./Components/DashLayout.jsx";
 import Welcome from "./features/auth/Welcome.jsx";
 import NotesList from "./features/notes/NotesList.jsx";
 import UsersList from "./features/users/UsersList.jsx";
+import EditUser from "./features/users/EditUser.jsx";
+import NewUserForm from "./features/users/NewUserForm.jsx";
+import EditNote from "./features/notes/EditNote.jsx";
+import NewNote from "./features/notes/NewNote.jsx";
 
 function App() {
   return (
@@ -14,17 +18,20 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Public />} />
           <Route path="login" element={<Login />} />
-
+          {/* Beginning Dash */}
           <Route path="dash" element={<DashLayout />}>
             <Route index element={<Welcome />} />
 
-            <Route path="notes">
-              <Route index element={<NotesList />} />
-            </Route>
-
             <Route path="users">
               <Route index element={<UsersList />} />
+              <Route path=":id" element={<EditUser />} />
+              <Route path="new" element={<NewUserForm />} />
             </Route>
+          </Route>
+          <Route path="notes">
+            <Route index element={<NotesList />} />
+            <Route path=":id" element={<EditNote />} />
+            <Route path="new" element={<NewNote />} />
           </Route>
           {/* End Dash */}
         </Route>

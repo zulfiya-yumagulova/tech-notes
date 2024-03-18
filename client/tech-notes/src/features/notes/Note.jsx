@@ -9,14 +9,15 @@ const Note = ({ noteId }) => {
   const note = useSelector((state) => selectNoteById(state, noteId));
 
   const navigate = useNavigate();
+  console.log(note);
 
   if (note) {
-    const created = new Date(note.createdAt).toLocaleString("en-US", {
+    const created = new Date(note.createdAt).toLocaleString("en-GB", {
       day: "numeric",
       month: "long",
     });
 
-    const updated = new Date(note.updatedAt).toLocaleString("en-US", {
+    const updated = new Date(note.updatedAt).toLocaleString("en-GB", {
       day: "numeric",
       month: "long",
     });
