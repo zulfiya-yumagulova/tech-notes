@@ -6,16 +6,15 @@ import bcrypt from "bcrypt";
 // Get All Users
 // GET
 export const getAllUsers = asyncHandler(async (req, res) => {
+  // Get all users from MongoDB
   const users = await User.find().select("-password").lean();
+
+  // If no users
   if (!users?.length) {
-    return res.status(400).json({
-      message: "No users found ",
-    });
+    return res.status(400).json({ message: "No users found" });
   }
-  res.status(200).json({
-    message: "success",
-    data: users,
-  });
+
+  res.json(users);
 });
 
 // Get a single user
@@ -44,36 +43,29 @@ export const createNewUser = asyncHandler(async (req, res) => {
 
   // Confirm data
   if (!username || !password || !Array.isArray(roles) || !roles.length) {
-    return res.status(400).json({
-      message: `All fields are required username, password, roles `,
-    });
+    return res.status(400).json({ message: "All fields are required" });
   }
 
-  // Check for duplicates
+  // Check for duplicate username
   const duplicate = await User.findOne({ username }).lean().exec();
 
   if (duplicate) {
-    return res.status(409).json({
-      message: "User name exists",
-    });
+    return res.status(409).json({ message: "Duplicate username" });
   }
-  // Hash password
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const userObject = { username, password: hashedPassword, roles };
 
-  // Create and store a new user
+  // Hash password
+  const hashedPwd = await bcrypt.hash(password, 10); // salt rounds
+
+  const userObject = { username, password: hashedPwd, roles };
+
+  // Create and store new user
   const user = await User.create(userObject);
+
   if (user) {
-    res.status(201).json({
-      message: "success",
-      data: {
-        user,
-      },
-    });
+    //created
+    res.status(201).json({ message: `New user ${username} created` });
   } else {
-    res.status(400).json({
-      message: "Invalid user data received",
-    });
+    res.status(400).json({ message: "Invalid user data received" });
   }
 });
 
@@ -90,45 +82,38 @@ export const updateUser = asyncHandler(async (req, res) => {
     !roles.length ||
     typeof active !== "boolean"
   ) {
-    return res.status(400).json({
-      message: "All fields are required",
-    });
+    return res
+      .status(400)
+      .json({ message: "All fields except password are required" });
   }
 
-  // Check if user exists
+  // Does the user exist to update?
   const user = await User.findById(id).exec();
+
   if (!user) {
-    return res.status(400).json({
-      message: "No user found",
-    });
+    return res.status(400).json({ message: "User not found" });
   }
 
   // Check for duplicate
   const duplicate = await User.findOne({ username }).lean().exec();
-  // Allow updates to the original
+
+  // Allow updates to the original user
   if (duplicate && duplicate?._id.toString() !== id) {
-    return res.status(404).json({
-      message: "Duplicate username",
-    });
+    return res.status(409).json({ message: "Duplicate username" });
   }
 
-  // Update user
   user.username = username;
-  user.role = roles;
+  user.roles = roles;
   user.active = active;
 
-  // update password
   if (password) {
-    // hash password
-    user.password = await bcrypt.hash(password, 10);
+    // Hash password
+    user.password = await bcrypt.hash(password, 10); // salt rounds
   }
 
   const updatedUser = await user.save();
 
-  res.json({
-    message: "success",
-    data: updatedUser,
-  });
+  res.json({ message: `${updatedUser.username} updated` });
 });
 // Delete a user
 // DELETE

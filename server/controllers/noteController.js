@@ -7,101 +7,74 @@ export const getAllNotes = asyncHandler(async (req, res) => {
   // Get all notes from MongoDB
   const notes = await Note.find().lean();
 
-  //   Check if no notes
+  // If no notes
   if (!notes?.length) {
-    return res.status(400).json({
-      message: "No notes found.",
-    });
+    return res.status(400).json({ message: "No notes found" });
   }
 
-  //   Add a username to each note before sending the response
   const notesWithUser = await Promise.all(
     notes.map(async (note) => {
-      const user = await User.findById(note.user);
-      return { ...note, username: user.username };
+      const user = await User.findById(note.user).lean().exec();
+      const username = user ? user.username : null;
+      return { ...note, username };
     })
   );
-  res.status(200).json({
-    message: "success",
-    data: notesWithUser,
-  });
+
+  res.json(notesWithUser);
 });
 
-// Get a single note
-// GET
-export const getNote = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+//  Create new note
+//  POST /notes
 
-  const note = await Note.findById(id);
-
-  if (!note) {
-    return res.status(400).json({
-      message: "No note found",
-    });
-  }
-
-  res.status(200).json({
-    message: "success",
-    data: note,
-  });
-});
-
-// Create Note
-// POST
-export const createNote = asyncHandler(async (req, res) => {
+export const createNewNote = asyncHandler(async (req, res) => {
   const { user, title, text } = req.body;
 
+  // Confirm data
   if (!user || !title || !text) {
-    return res.status(400).json({
-      message: "All fieled are requered",
-    });
+    return res.status(400).json({ message: "All fields are required" });
   }
 
-  // Check if duplicate title
+  // Check for duplicate title
   const duplicate = await Note.findOne({ title }).lean().exec();
+
   if (duplicate) {
-    return res.status(409).json({
-      message: "Duplicate note title",
-    });
+    return res.status(409).json({ message: "Duplicate note title" });
   }
 
-  // Create and store the new note
+  // Create and store the new user
   const note = await Note.create({ user, title, text });
 
   if (note) {
-    return res.status(201).json({
-      message: "success",
-    });
+    // Created
+    return res.status(201).json({ message: "New note created" });
   } else {
-    res.status(400).json({
-      message: "Invalid data recived",
-    });
+    return res.status(400).json({ message: "Invalid note data received" });
   }
 });
 
-// Udate note
-// PATCH
+// Update a note
+// PATCH /notes
+
 export const updateNote = asyncHandler(async (req, res) => {
-  const { id, user, title, text, completed } = req.params;
+  const { id, user, title, text, completed } = req.body;
 
   // Confirm data
   if (!id || !user || !title || !text || typeof completed !== "boolean") {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const note = await Note.findByIdAndUpdate(id).exec();
+  // Confirm note exists to update
+  const note = await Note.findById(id).exec();
 
   if (!note) {
-    return res.status(400).json({
-      message: "Note not found",
-    });
+    return res.status(400).json({ message: "Note not found" });
   }
 
-  //   Check for duplicate title
+  // Check for duplicate title
   const duplicate = await Note.findOne({ title }).lean().exec();
 
-  // Allow remaining of the original note
-  if (duplicate && duplicate._id.toString() !== id) {
+  // Allow renaming of the original note
+  if (duplicate && duplicate?._id.toString() !== id) {
     return res.status(409).json({ message: "Duplicate note title" });
   }
 
@@ -112,32 +85,30 @@ export const updateNote = asyncHandler(async (req, res) => {
 
   const updatedNote = await note.save();
 
-  res.status(201).json({
-    message: "success",
-    data: updatedNote,
-  });
+  res.json(`'${updatedNote.title}' updated`);
 });
 
-// Delete note
-// DELETE
+//  Delete a note
+// DELETE /notes
+
 export const deleteNote = asyncHandler(async (req, res) => {
   const { id } = req.body;
 
+  // Confirm data
   if (!id) {
-    return res.status(400).json({
-      message: "Note ID required",
-    });
+    return res.status(400).json({ message: "Note ID required" });
   }
 
   // Confirm note exists to delete
   const note = await Note.findById(id).exec();
+
   if (!note) {
     return res.status(400).json({ message: "Note not found" });
   }
 
-  const result = await Note.deleteOne();
-  res.status(201).json({
-    message: "Note has been deleted",
-    data: null,
-  });
+  const result = await note.deleteOne();
+
+  const reply = `Note '${result.title}' with ID ${result._id} deleted`;
+
+  res.json(reply);
 });
