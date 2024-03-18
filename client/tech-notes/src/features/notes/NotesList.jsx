@@ -11,7 +11,7 @@ const NotesList = () => {
   } = useGetNotesQuery();
 
   let content;
-
+  //
   if (isLoading) content = <p>Loading...</p>;
 
   if (isError) {
@@ -22,7 +22,9 @@ const NotesList = () => {
     const { ids } = notes;
 
     const tableContent = ids?.length
-      ? ids.map((noteId) => <Note key={noteId} noteId={noteId} />)
+      ? ids.map((noteId, note) => {
+          return <Note key={noteId} noteId={noteId} />;
+        })
       : null;
 
     content = (
