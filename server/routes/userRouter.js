@@ -22,7 +22,7 @@ userRouter.get("/:id", getUser);
 userRouter.post("/", createNewUser);
 
 // PATCH
-userRouter.patch("/:id", updateUser);
+userRouter.patch("/", updateUser);
 
 // Delete
-userRouter.delete("/:id", deleteUser);
+userRouter.delete("/", deleteUser);

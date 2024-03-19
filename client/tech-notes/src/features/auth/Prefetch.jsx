@@ -6,19 +6,19 @@ import { usersApiSlice } from "../users/usersApiSlice";
 
 import React from "react";
 
-function Prefetch() {
+const Prefetch = () => {
   useEffect(() => {
-    console.log("subscribng");
-    const notes = store.dispatch(notesApiSlice.endpoints.getNotes.initiate);
-    const users = store.dispatch(usersApiSlice.endpoints.getUsers.initiate);
+    console.log("subscribing");
+    const notes = store.dispatch(notesApiSlice.endpoints.getNotes.initiate());
+    const users = store.dispatch(usersApiSlice.endpoints.getUsers.initiate());
 
     return () => {
-      console.log("unsibscribing");
+      console.log("unsubscribing");
       notes.unsubscribe();
       users.unsubscribe();
     };
-  });
-  return <Outlet />;
-}
+  }, []);
 
+  return <Outlet />;
+};
 export default Prefetch;

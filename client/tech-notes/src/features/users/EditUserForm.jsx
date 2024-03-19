@@ -26,17 +26,14 @@ const EditUserForm = ({ user }) => {
   const [roles, setRoles] = useState(user.roles);
   const [active, setActive] = useState(user.active);
 
-  // Check if the username isvalid
   useEffect(() => {
     setValidUsername(USER_REGEX.test(username));
   }, [username]);
 
-  // Check if password is valid
   useEffect(() => {
     setValidPassword(PWD_REGEX.test(password));
   }, [password]);
 
-  // Checking the success status
   useEffect(() => {
     console.log(isSuccess);
     if (isSuccess || isDelSuccess) {
@@ -47,7 +44,6 @@ const EditUserForm = ({ user }) => {
     }
   }, [isSuccess, isDelSuccess, navigate]);
 
-  // Handler functions
   const onUsernameChanged = (e) => setUsername(e.target.value);
   const onPasswordChanged = (e) => setPassword(e.target.value);
 
@@ -59,11 +55,9 @@ const EditUserForm = ({ user }) => {
     setRoles(values);
   };
 
-  // Sets the previous active status to opposite
   const onActiveChanged = () => setActive((prev) => !prev);
 
   const onSaveUserClicked = async (e) => {
-    // Check if user has password to avoid updating password every time when user was edited
     if (password) {
       await updateUser({ id: user.id, username, password, roles, active });
     } else {
@@ -71,7 +65,6 @@ const EditUserForm = ({ user }) => {
     }
   };
 
-  // Delete user
   const onDeleteUserClicked = async () => {
     await deleteUser({ id: user.id });
   };
@@ -79,13 +72,13 @@ const EditUserForm = ({ user }) => {
   const options = Object.values(ROLES).map((role) => {
     return (
       <option key={role} value={role}>
+        {" "}
         {role}
       </option>
     );
   });
 
   let canSave;
-  // Check if the user already has a password
   if (password) {
     canSave =
       [roles.length, validUsername, validPassword].every(Boolean) && !isLoading;
@@ -93,7 +86,6 @@ const EditUserForm = ({ user }) => {
     canSave = [roles.length, validUsername].every(Boolean) && !isLoading;
   }
 
-  // Check
   const errClass = isError || isDelError ? "errmsg" : "offscreen";
   const validUserClass = !validUsername ? "form__input--incomplete" : "";
   const validPwdClass =
@@ -102,10 +94,9 @@ const EditUserForm = ({ user }) => {
     ? "form__input--incomplete"
     : "";
 
-  // Create error content
   const errContent = (error?.data?.message || delerror?.data?.message) ?? "";
 
-  return (
+  const content = (
     <>
       <p className={errClass}>{errContent}</p>
 
@@ -188,5 +179,7 @@ const EditUserForm = ({ user }) => {
       </form>
     </>
   );
+
+  return content;
 };
 export default EditUserForm;

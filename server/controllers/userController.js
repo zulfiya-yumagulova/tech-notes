@@ -73,7 +73,6 @@ export const createNewUser = asyncHandler(async (req, res) => {
 // PATCH
 export const updateUser = asyncHandler(async (req, res) => {
   const { id, username, roles, active, password } = req.body;
-
   // Confirm data
   if (
     !id ||
